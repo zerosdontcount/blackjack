@@ -1,0 +1,69 @@
+
+<table border="0" width="40%" cellpadding="2" cellspacing="3">
+  <tr>
+    <td><h3>Welcome <%= session[:player_name] %></h3></td>
+    <td>
+      <% if @hs_buttons %>
+        <form id="hit" action="/game/player/hit" method="post">
+          <input type="submit" class="btn btn-success" value="Hit">
+        </form>
+      <% end %>
+      <% if @play %>
+        <form id="play" action="/game/another" method="post">
+          <input type="submit" class="btn" value="Play Again">
+        </form>
+      <% end %>
+    </td>
+    <td>
+      <% if @hs_buttons %>
+        <form id="stay" action="/game/player/stay" method="post">
+          <input type="submit" class="btn btn-warning" value="stay">
+        </form>
+      <% end %>
+    </td>
+    <td>
+      <% if @dealer_hit %>
+        <form id="hit" action="/game/dealer/hit" method="post">
+          <input type="submit" class="btn btn-info" value="Next Move">
+        </form>
+      <% end %>
+    </td>
+  </tr>
+</table>
+<br/>
+
+<div class="well">
+  <h4>Dealers's Cards:</h4>
+  <br/>
+  <% session[:dealer_hand].each do |card| %>
+    <%= card_image(card) %>
+  <% end %>
+  <% if session[:dealer_hand].size == 1 %>
+    <img src='/images/cards/cover.jpg' class='card'>
+  <% end %>
+</div>
+
+<div id='buttons'>
+  <p style="color:white;">Your total: <strong><%= total(session[:player_hand]) %></strong>
+    &nbsp &nbsp Dealer total: <strong><%= total(session[:dealer_hand]) %></strong>
+
+    <% if session[:dealer_hand].size >= 2 && total(session[:dealer_hand]) < 17 && total(session[:player_hand]) <= 21 %>
+      <% if session[:player_hand].size == 2 && total(session[:player_hand]) == 21 %>
+      <% else %>
+        &nbsp &nbsp <span id='status'>Dealer must hit</span>
+      <% end %>
+    <% end %>
+  </p> 
+</div> 
+
+<div class="well">
+  <h4>Your Cards:</h4>
+  <br/>
+   <% session[:player_hand].each do |card| %>
+     <%= card_image(card) %>
+   <% end %>
+</div>
+
+
+
+

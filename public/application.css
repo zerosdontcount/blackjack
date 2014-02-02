@@ -1,0 +1,29 @@
+img.card{
+  margin: 0px 10px 5px 0px;
+  width: auto;
+  max-height: 120px;
+}
+
+div.well {
+  background-image:url('/images/cards/felt2.jpg');
+  border: 3;
+  border-color: gold;
+}
+
+body {
+  background-image:url('/images/cards/b2.jpg');
+}
+
+h4, h3{
+  color: white;
+  text-shadow: 0 0 6px black;
+}
+
+strong{
+  color: gold;
+  text-shadow: 0 0 3px black;
+}
+
+#status{
+  color: red;
+}
