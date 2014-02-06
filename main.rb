@@ -39,6 +39,7 @@ get '/' do
   if session[:player_name]
     redirect '/game'
   else
+    session[:player_pot] = 500
     erb :new_player
   end
 end
