@@ -14,7 +14,7 @@ body {
   background-image:url('/images/cards/b2.jpg');
 }
 
-h4, h3{
+h5, h4, h3{
   color: white;
   text-shadow: 0 0 6px black;
 }
@@ -26,4 +26,12 @@ strong{
 
 #status{
   color: red;
+}
+
+.pot{
+  color: #99FF33;
+}
+
+#current_bet{
+  color: #F0E930;
 }

@@ -32,6 +32,7 @@ end
 
 before do
   @hs_buttons = true #hit or stay buttons
+  @show_bet = true
 end
 
 get '/' do
@@ -43,6 +44,7 @@ get '/' do
 end
 
 get '/new_player' do
+  session[:player_pot] = 500
   erb :new_player
 end
 
@@ -52,6 +54,30 @@ post '/start_game' do
     halt erb :new_player
   end
   session[:player_name] = params[:player_name]
+  redirect '/game/bet'
+end
+
+get '/game/bet' do
+  if session[:player_pot] == 0
+    @error = "You ran out of money! Click 'New Player' at the top to start over."
+    erb :bet
+  end
+    erb :bet
+end
+
+post '/game/enter_bet' do
+  if session[:player_pot] == 0
+    @error = "You ran out of money! Click 'Start Over' at the top to start over."
+    halt erb :bet
+  elsif session[:bet].to_i == nil || params[:bet].to_i == 0
+    @error = "You must enter a bet between 1 and #{session[:player_pot]}"
+    halt erb :bet
+  elsif params[:bet].to_i > session[:player_pot]
+    @error = "You must enter in a bet less than the total pot"
+    halt erb :bet
+  end
+  session[:current_bet] = params[:bet]
+  session[:player_pot] = session[:player_pot].to_i - session[:current_bet].to_i
   redirect '/game'
 end
 
@@ -66,6 +92,7 @@ get '/game' do
   session[:player_hand] << session[:deck].pop
   session[:dealer_hand] << session[:deck].pop
   session[:player_hand] << session[:deck].pop
+  @bet = true
 
   if total(session[:player_hand]) == 21
     @success = "You have Blackjack!"
@@ -151,6 +178,7 @@ end
 
 get '/game/winner' do
   @hs_buttons = false
+  @show_bet = false
   #check for dealer BJ
   if total(session[:dealer_hand]) == 21 && session[:dealer_hand].size == 2
     @dealerBJ = true
@@ -169,27 +197,33 @@ get '/game/winner' do
       @error = "Sorry, you have busted! Dealer wins with a total of #{total(session[:dealer_hand])}"
     when total(session[:player_hand]) > total(session[:dealer_hand]) && total(session[:player_hand]) <= 21 && @playerBJ == false
       @success = "You win! You beat the dealer #{total(session[:player_hand])} to #{total(session[:dealer_hand])}"
+      session[:player_pot] = session[:player_pot].to_i + (2 * session[:current_bet].to_i)
     when @playerBJ == true
       @success = "Blackjack! You win!"
+      session[:player_pot] = session[:player_pot].to_i + (2 * session[:current_bet].to_i)
     when total(session[:player_hand]) < total(session[:dealer_hand]) && @dealerBJ == false && total(session[:dealer_hand]) <= 21
       @error = "Sorry, dealer beats you #{total(session[:dealer_hand])} to #{total(session[:player_hand])}"
     when total(session[:dealer_hand]) > 21
       @success = "Dealer busted, you win with #{total(session[:player_hand])}!"
+      session[:player_pot] = session[:player_pot].to_i + (2 * session[:current_bet].to_i)
     when @dealerBJ == true && total(session[:player_hand]) == 21 && session[:player_hand].size != 2
       @error = "Sorry, Blackjack beats multicard 21. You lose."
     when @dealerBJ == true && @playerBJ = false
       @error = "Sorry, Dealer beats you with Blackjack!"
     when total(session[:player_hand]) == total(session[:dealer_hand])  
       @success = "It's a push!"
+      session[:player_pot] = session[:player_pot].to_i + session[:current_bet].to_i
     when @dealerBJ == true && @playerBJ == false
       @error = "Sorry, Dealer beats you with a Blackjack"
   end
+  session[:current_bet] = 0
   @play = true
   erb :game
 end
 
+
 post '/game/another' do
-  redirect '/game'
+  redirect '/game/bet'
 end
 
 

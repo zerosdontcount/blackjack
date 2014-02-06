@@ -1,7 +1,14 @@
 
-<table border="0" width="40%" cellpadding="2" cellspacing="3">
+<table border="0" width="60%" cellpadding="0" cellspacing="1">
   <tr>
-    <td><h3>Welcome <%= session[:player_name] %></h3></td>
+    <td>
+      <h3>Welcome <%= session[:player_name] %></h3>
+      <h4>Player Pot: <span class="pot">$<%= session[:player_pot] %> 
+      <% if @show_bet %>
+        &nbsp &nbsp</span> Current Bet: <span id="current_bet">
+        $<%= session[:current_bet] %></span></h4>
+      <% end %>
+    </td>
     <td>
       <% if @hs_buttons %>
         <form id="hit" action="/game/player/hit" method="post">
@@ -13,7 +20,6 @@
           <input type="submit" class="btn" value="Play Again">
         </form>
       <% end %>
-    </td>
     <td>
       <% if @hs_buttons %>
         <form id="stay" action="/game/player/stay" method="post">
