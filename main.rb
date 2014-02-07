@@ -60,7 +60,7 @@ end
 
 get '/game/bet' do
   if session[:player_pot] == 0
-    @error = "You ran out of money! Click 'New Player' at the top to start over."
+    @error = "You ran out of money! Click 'Start Over' at the top to start over."
     erb :bet
   end
     erb :bet
